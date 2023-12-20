@@ -19,33 +19,31 @@ import { GqlDefaultAuthGuard } from "../../auth/gqlDefaultAuth.guard";
 import * as common from "@nestjs/common";
 import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
 import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
-import { Product } from "./Product";
-import { ProductCountArgs } from "./ProductCountArgs";
-import { ProductFindManyArgs } from "./ProductFindManyArgs";
-import { ProductFindUniqueArgs } from "./ProductFindUniqueArgs";
-import { CreateProductArgs } from "./CreateProductArgs";
-import { UpdateProductArgs } from "./UpdateProductArgs";
-import { DeleteProductArgs } from "./DeleteProductArgs";
-import { OrderFindManyArgs } from "../../order/base/OrderFindManyArgs";
-import { Order } from "../../order/base/Order";
-import { Variant } from "../../variant/base/Variant";
-import { ProductService } from "../product.service";
+import { Variant } from "./Variant";
+import { VariantCountArgs } from "./VariantCountArgs";
+import { VariantFindManyArgs } from "./VariantFindManyArgs";
+import { VariantFindUniqueArgs } from "./VariantFindUniqueArgs";
+import { CreateVariantArgs } from "./CreateVariantArgs";
+import { UpdateVariantArgs } from "./UpdateVariantArgs";
+import { DeleteVariantArgs } from "./DeleteVariantArgs";
+import { Product } from "../../product/base/Product";
+import { VariantService } from "../variant.service";
 @common.UseGuards(GqlDefaultAuthGuard, gqlACGuard.GqlACGuard)
-@graphql.Resolver(() => Product)
-export class ProductResolverBase {
+@graphql.Resolver(() => Variant)
+export class VariantResolverBase {
   constructor(
-    protected readonly service: ProductService,
+    protected readonly service: VariantService,
     protected readonly rolesBuilder: nestAccessControl.RolesBuilder
   ) {}
 
   @graphql.Query(() => MetaQueryPayload)
   @nestAccessControl.UseRoles({
-    resource: "Product",
+    resource: "Variant",
     action: "read",
     possession: "any",
   })
-  async _productsMeta(
-    @graphql.Args() args: ProductCountArgs
+  async _variantsMeta(
+    @graphql.Args() args: VariantCountArgs
   ): Promise<MetaQueryPayload> {
     const result = await this.service.count(args);
     return {
@@ -54,29 +52,29 @@ export class ProductResolverBase {
   }
 
   @common.UseInterceptors(AclFilterResponseInterceptor)
-  @graphql.Query(() => [Product])
+  @graphql.Query(() => [Variant])
   @nestAccessControl.UseRoles({
-    resource: "Product",
+    resource: "Variant",
     action: "read",
     possession: "any",
   })
-  async products(
-    @graphql.Args() args: ProductFindManyArgs
-  ): Promise<Product[]> {
-    return this.service.products(args);
+  async variants(
+    @graphql.Args() args: VariantFindManyArgs
+  ): Promise<Variant[]> {
+    return this.service.variants(args);
   }
 
   @common.UseInterceptors(AclFilterResponseInterceptor)
-  @graphql.Query(() => Product, { nullable: true })
+  @graphql.Query(() => Variant, { nullable: true })
   @nestAccessControl.UseRoles({
-    resource: "Product",
+    resource: "Variant",
     action: "read",
     possession: "own",
   })
-  async product(
-    @graphql.Args() args: ProductFindUniqueArgs
-  ): Promise<Product | null> {
-    const result = await this.service.product(args);
+  async variant(
+    @graphql.Args() args: VariantFindUniqueArgs
+  ): Promise<Variant | null> {
+    const result = await this.service.variant(args);
     if (result === null) {
       return null;
     }
@@ -84,50 +82,46 @@ export class ProductResolverBase {
   }
 
   @common.UseInterceptors(AclValidateRequestInterceptor)
-  @graphql.Mutation(() => Product)
+  @graphql.Mutation(() => Variant)
   @nestAccessControl.UseRoles({
-    resource: "Product",
+    resource: "Variant",
     action: "create",
     possession: "any",
   })
-  async createProduct(
-    @graphql.Args() args: CreateProductArgs
-  ): Promise<Product> {
-    return await this.service.createProduct({
+  async createVariant(
+    @graphql.Args() args: CreateVariantArgs
+  ): Promise<Variant> {
+    return await this.service.createVariant({
       ...args,
       data: {
         ...args.data,
 
-        variants: args.data.variants
-          ? {
-              connect: args.data.variants,
-            }
-          : undefined,
+        productId: {
+          connect: args.data.productId,
+        },
       },
     });
   }
 
   @common.UseInterceptors(AclValidateRequestInterceptor)
-  @graphql.Mutation(() => Product)
+  @graphql.Mutation(() => Variant)
   @nestAccessControl.UseRoles({
-    resource: "Product",
+    resource: "Variant",
     action: "update",
     possession: "any",
   })
-  async updateProduct(
-    @graphql.Args() args: UpdateProductArgs
-  ): Promise<Product | null> {
+  async updateVariant(
+    @graphql.Args() args: UpdateVariantArgs
+  ): Promise<Variant | null> {
     try {
-      return await this.service.updateProduct({
+      return await this.service.updateVariant({
         ...args,
         data: {
           ...args.data,
 
-          variants: args.data.variants
-            ? {
-                connect: args.data.variants,
-              }
-            : undefined,
+          productId: {
+            connect: args.data.productId,
+          },
         },
       });
     } catch (error) {
@@ -140,17 +134,17 @@ export class ProductResolverBase {
     }
   }
 
-  @graphql.Mutation(() => Product)
+  @graphql.Mutation(() => Variant)
   @nestAccessControl.UseRoles({
-    resource: "Product",
+    resource: "Variant",
     action: "delete",
     possession: "any",
   })
-  async deleteProduct(
-    @graphql.Args() args: DeleteProductArgs
-  ): Promise<Product | null> {
+  async deleteVariant(
+    @graphql.Args() args: DeleteVariantArgs
+  ): Promise<Variant | null> {
     try {
-      return await this.service.deleteProduct(args);
+      return await this.service.deleteVariant(args);
     } catch (error) {
       if (isRecordNotFoundError(error)) {
         throw new GraphQLError(
@@ -162,39 +156,19 @@ export class ProductResolverBase {
   }
 
   @common.UseInterceptors(AclFilterResponseInterceptor)
-  @graphql.ResolveField(() => [Order], { name: "orders" })
-  @nestAccessControl.UseRoles({
-    resource: "Order",
-    action: "read",
-    possession: "any",
-  })
-  async findOrders(
-    @graphql.Parent() parent: Product,
-    @graphql.Args() args: OrderFindManyArgs
-  ): Promise<Order[]> {
-    const results = await this.service.findOrders(parent.id, args);
-
-    if (!results) {
-      return [];
-    }
-
-    return results;
-  }
-
-  @common.UseInterceptors(AclFilterResponseInterceptor)
-  @graphql.ResolveField(() => Variant, {
+  @graphql.ResolveField(() => Product, {
     nullable: true,
-    name: "variants",
+    name: "productId",
   })
   @nestAccessControl.UseRoles({
-    resource: "Variant",
+    resource: "Product",
     action: "read",
     possession: "any",
   })
-  async getVariants(
-    @graphql.Parent() parent: Product
-  ): Promise<Variant | null> {
-    const result = await this.service.getVariants(parent.id);
+  async getProductId(
+    @graphql.Parent() parent: Variant
+  ): Promise<Product | null> {
+    const result = await this.service.getProductId(parent.id);
 
     if (!result) {
       return null;

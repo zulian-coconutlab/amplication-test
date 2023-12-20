@@ -52,7 +52,15 @@ export class ProductControllerBase {
     @common.Body() data: ProductCreateInput
   ): Promise<Product> {
     return await this.service.createProduct({
-      data: data,
+      data: {
+        ...data,
+
+        variants: data.variants
+          ? {
+              connect: data.variants,
+            }
+          : undefined,
+      },
       select: {
         createdAt: true,
         description: true,
@@ -60,6 +68,12 @@ export class ProductControllerBase {
         itemPrice: true,
         name: true,
         updatedAt: true,
+
+        variants: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -87,6 +101,12 @@ export class ProductControllerBase {
         itemPrice: true,
         name: true,
         updatedAt: true,
+
+        variants: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -115,6 +135,12 @@ export class ProductControllerBase {
         itemPrice: true,
         name: true,
         updatedAt: true,
+
+        variants: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
     if (result === null) {
@@ -144,7 +170,15 @@ export class ProductControllerBase {
     try {
       return await this.service.updateProduct({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          variants: data.variants
+            ? {
+                connect: data.variants,
+              }
+            : undefined,
+        },
         select: {
           createdAt: true,
           description: true,
@@ -152,6 +186,12 @@ export class ProductControllerBase {
           itemPrice: true,
           name: true,
           updatedAt: true,
+
+          variants: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {
@@ -188,6 +228,12 @@ export class ProductControllerBase {
           itemPrice: true,
           name: true,
           updatedAt: true,
+
+          variants: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {

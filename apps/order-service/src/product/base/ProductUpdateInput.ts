@@ -19,6 +19,7 @@ import {
 } from "class-validator";
 import { OrderUpdateManyWithoutProductsInput } from "./OrderUpdateManyWithoutProductsInput";
 import { Type } from "class-transformer";
+import { VariantWhereUniqueInput } from "../../variant/base/VariantWhereUniqueInput";
 
 @InputType()
 class ProductUpdateInput {
@@ -66,6 +67,18 @@ class ProductUpdateInput {
     nullable: true,
   })
   orders?: OrderUpdateManyWithoutProductsInput;
+
+  @ApiProperty({
+    required: false,
+    type: () => VariantWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => VariantWhereUniqueInput)
+  @IsOptional()
+  @Field(() => VariantWhereUniqueInput, {
+    nullable: true,
+  })
+  variants?: VariantWhereUniqueInput | null;
 }
 
 export { ProductUpdateInput as ProductUpdateInput };

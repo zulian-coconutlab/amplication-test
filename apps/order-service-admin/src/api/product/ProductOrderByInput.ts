@@ -7,4 +7,5 @@ export type ProductOrderByInput = {
   itemPrice?: SortOrder;
   name?: SortOrder;
   updatedAt?: SortOrder;
+  variantsId?: SortOrder;
 };
