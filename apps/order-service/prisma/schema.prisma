@@ -64,4 +64,13 @@ model Product {
   name        String?
   orders      Order[]
   updatedAt   DateTime @updatedAt
+  variants    Variant? @relation(fields: [variantsId], references: [id])
+  variantsId  String?  @unique
+}
+
+model Variant {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  productId Product?
+  updatedAt DateTime @updatedAt
 }

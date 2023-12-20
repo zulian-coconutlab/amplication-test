@@ -8,9 +8,12 @@ import {
   NumberInput,
   ReferenceArrayInput,
   SelectArrayInput,
+  ReferenceInput,
+  SelectInput,
 } from "react-admin";
 
 import { OrderTitle } from "../order/OrderTitle";
+import { VariantTitle } from "../variant/VariantTitle";
 
 export const ProductEdit = (props: EditProps): React.ReactElement => {
   return (
@@ -27,6 +30,13 @@ export const ProductEdit = (props: EditProps): React.ReactElement => {
         >
           <SelectArrayInput optionText={OrderTitle} />
         </ReferenceArrayInput>
+        <ReferenceInput
+          source="variants.id"
+          reference="Variant"
+          label="Variants"
+        >
+          <SelectInput optionText={VariantTitle} />
+        </ReferenceInput>
       </SimpleForm>
     </Edit>
   );

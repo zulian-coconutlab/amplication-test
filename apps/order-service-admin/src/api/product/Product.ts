@@ -1,4 +1,5 @@
 import { Order } from "../order/Order";
+import { Variant } from "../variant/Variant";
 
 export type Product = {
   createdAt: Date;
@@ -8,4 +9,5 @@ export type Product = {
   name: string | null;
   orders?: Array<Order>;
   updatedAt: Date;
+  variants?: Variant | null;
 };
